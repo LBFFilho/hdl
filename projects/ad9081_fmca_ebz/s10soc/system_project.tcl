@@ -75,6 +75,9 @@ if {$common_lanes > [get_env_param TX_JESD_L 4]} {
 
 source fmc_constr.tcl
 
+# transceiver calibration clock
+set_global_assignment -name DEVICE_INITIALIZATION_CLOCK OSC_CLK_1_125MHZ
+
 # set optimization to get a better timing closure
 set_global_assignment -name OPTIMIZATION_MODE "HIGH PERFORMANCE EFFORT"
 set_global_assignment -name PLACEMENT_EFFORT_MULTIPLIER 1.2

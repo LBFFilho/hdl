@@ -443,12 +443,6 @@ add_connection xcvr_reset_ctrl.rx_is_lockedtodata jesd_TX_RX.rx_islockedtodata
 add_connection xcvr_reset_ctrl.tx_cal_busy jesd_TX_RX.tx_cal_busy
 add_connection xcvr_reset_ctrl.rx_cal_busy jesd_TX_RX.rx_cal_busy
 
-
-# FIXME: export these and connect on top level rtl
-#set_wirelevel_expression jesd_TX_RX.pll_locked "{4{xcvr_atx_pll.pll_locked}}"
-#set_wirelevel_expression xcvr_reset_ctrl.pll_select "4'b0"
-
-
 add_connection reset_seq.reset_out0 jesd_core_pll.reset
 add_connection reset_seq.reset_out1 xcvr_reset_ctrl.reset
 add_connection reset_seq.reset_out2 jesd_TX_RX.jesd204_tx_avs_rst_n
@@ -457,12 +451,6 @@ add_connection reset_seq.reset_out2 jesd_TX_RX.jesd204_tx_avs_rst_n
 add_connection reset_seq.reset_out5 jesd_TX_RX.jesd204_rx_avs_rst_n
 # add_connection reset_seq.reset_out6 -- jesd rx link reset (see device reset)
 # add_connection reset_seq.reset_out7 -- jesd rx frame reset (see device reset)
-
-
-# FIXME export signals below and connect on top level rtl
-# add_connection reset_seq.reset1_dsrt_qual FIXME -- jesd core pll locked, registered with sys_clk (don't forget to false path it)
-# add_connection reset_seq.reset2_dsrt_qual FIXME -- &(xcvr rst ctrl tx_ready[3..0] | jesd tx_csr_lane_powerdown[3..0]) (wirelevel)
-# add_connection reset_seq.reset5_dsrt_qual FIXME -- &(xcvr rst ctrl rx_ready[3..0] | jesd rx_csr_lane_powerdown[3..0]) (wirelevel)
 
 
 # device clock and reset
@@ -512,6 +500,7 @@ add_connection jesd_TX_RX.tx_dev_sync_n jesd_TX_RX.mdev_sync_n
 ## Exported signals
 #
 
+# JESD serial interface
 add_interface rx_sysref                     conduit end
 add_interface rx_sync                       conduit end
 add_interface rx_serial_data                conduit end
@@ -520,6 +509,7 @@ add_interface tx_sysref                     conduit end
 add_interface tx_sync                       conduit end
 add_interface device_clk                    clock   sink
 add_interface xcvr_ref_clk                  clock   sink
+# JESD reset logic
 add_interface xcvr_reset_ctrl_pll_select    conduit end
 add_interface xcvr_reset_ctrl_pll_locked    conduit end
 add_interface xcvr_reset_ctrl_tx_ready      conduit end
@@ -530,15 +520,38 @@ add_interface reset_seq_dsrt5_qual          conduit end
 add_interface jesd_pll_locked               conduit end
 add_interface atx_pll_locked                conduit end
 add_interface core_pll_locked               conduit end
+# JESD CSR
+add_interface tx_csr_testmode               conduit_end
+add_interface tx_csr_hd                     conduit_end
+add_interface tx_csr_cs                     conduit_end
+add_interface tx_csr_l                      conduit_end
+add_interface tx_csr_k                      conduit_end
+add_interface tx_csr_n                      conduit_end
+add_interface tx_csr_np                     conduit_end
+add_interface tx_csr_s                      conduit_end
+add_interface tx_csr_cf                     conduit_end
+add_interface tx_csr_f                      conduit_end
+add_interface tx_csr_m                      conduit_end
+add_interface tx_csr_lane_powerdown         conduit end
+add_interface rx_csr_testmode               conduit_end
+add_interface rx_csr_f                      conduit_end
+add_interface rx_csr_k                      conduit_end
+add_interface rx_csr_l                      conduit_end
+add_interface rx_csr_m                      conduit_end
+add_interface rx_csr_n                      conduit_end
+add_interface rx_csr_s                      conduit_end
+add_interface rx_csr_cf                     conduit_end
+add_interface rx_csr_cs                     conduit_end
+add_interface rx_csr_hd                     conduit_end
+add_interface rx_csr_np                     conduit_end
+add_interface rx_csr_lane_powerdown         conduit end
 
-
-# set_interface_property rx_sysref        EXPORT_OF mxfe_rx_jesd204.sysref
-# set_interface_property rx_sync          EXPORT_OF mxfe_rx_jesd204.sync
-# set_interface_property rx_serial_data   EXPORT_OF mxfe_rx_jesd204.serial_data
-
-# set_interface_property tx_sysref        EXPORT_OF mxfe_tx_jesd204.sysref
-# set_interface_property tx_sync          EXPORT_OF mxfe_tx_jesd204.sync
-# set_interface_property tx_serial_data   EXPORT_OF mxfe_tx_jesd204.serial_data
+set_interface_property rx_sysref                    EXPORT_OF jesd_TX_RX.rx_sysref
+set_interface_property rx_sync                      EXPORT_OF jesd_TX_RX.rx_dev_sync_n
+set_interface_property rx_serial_data               EXPORT_OF jesd_TX_RX.rx_serial_data
+set_interface_property tx_sysref                    EXPORT_OF jesd_TX_RX.tx_sysref
+set_interface_property tx_sync                      EXPORT_OF jesd_TX_RX.sync_n
+set_interface_property tx_serial_data               EXPORT_OF jesd_TX_RX.tx_serial_data
 set_interface_property device_clk                   EXPORT_OF device_clk.in_clk
 set_interface_property xcvr_ref_clk                 EXPORT_OF xcvr_ref_clk.in_clk
 set_interface_property xcvr_reset_ctrl_pll_select   EXPORT_OF xcvr_reset_ctrl.pll_select
@@ -551,6 +564,30 @@ set_interface_property reset_seq_dsrt5_qual         EXPORT_OF reset_seq.reset5_d
 set_interface_property jesd_pll_locked              EXPORT_OF jesd_TX_RX.pll_locked  
 set_interface_property atx_pll_locked               EXPORT_OF xcvr_atx_pll.pll_locked
 set_interface_property core_pll_locked              EXPORT_OF jesd_core_pll.locked
+set_interface_property tx_csr_testmode              EXPORT_OF jesd_TX_RX.tx_csr_testmode
+set_interface_property tx_csr_hd                    EXPORT_OF jesd_TX_RX.tx_csr_hd
+set_interface_property tx_csr_cs                    EXPORT_OF jesd_TX_RX.tx_csr_cs
+set_interface_property tx_csr_l                     EXPORT_OF jesd_TX_RX.tx_csr_l
+set_interface_property tx_csr_k                     EXPORT_OF jesd_TX_RX.tx_csr_k
+set_interface_property tx_csr_n                     EXPORT_OF jesd_TX_RX.tx_csr_n
+set_interface_property tx_csr_np                    EXPORT_OF jesd_TX_RX.tx_csr_np
+set_interface_property tx_csr_s                     EXPORT_OF jesd_TX_RX.tx_csr_s
+set_interface_property tx_csr_cf                    EXPORT_OF jesd_TX_RX.tx_csr_cf
+set_interface_property tx_csr_f                     EXPORT_OF jesd_TX_RX.tx_csr_f
+set_interface_property tx_csr_m                     EXPORT_OF jesd_TX_RX.tx_csr_m
+set_interface_property tx_csr_lane_powerdown        EXPORT_OF jesd_TX_RX.tx_csr_lane_powerdown
+set_interface_property rx_csr_testmode              EXPORT_OF jesd_TX_RX.rx_csr_testmode
+set_interface_property rx_csr_f                     EXPORT_OF jesd_TX_RX.rx_csr_f
+set_interface_property rx_csr_k                     EXPORT_OF jesd_TX_RX.rx_csr_k
+set_interface_property rx_csr_l                     EXPORT_OF jesd_TX_RX.rx_csr_l
+set_interface_property rx_csr_m                     EXPORT_OF jesd_TX_RX.rx_csr_m
+set_interface_property rx_csr_n                     EXPORT_OF jesd_TX_RX.rx_csr_n
+set_interface_property rx_csr_s                     EXPORT_OF jesd_TX_RX.rx_csr_s
+set_interface_property rx_csr_cf                    EXPORT_OF jesd_TX_RX.rx_csr_cf
+set_interface_property rx_csr_cs                    EXPORT_OF jesd_TX_RX.rx_csr_cs
+set_interface_property rx_csr_hd                    EXPORT_OF jesd_TX_RX.rx_csr_hd
+set_interface_property rx_csr_np                    EXPORT_OF jesd_TX_RX.rx_csr_np
+set_interface_property rx_csr_lane_powerdown        EXPORT_OF jesd_TX_RX.rx_csr_lane_powerdown
 
 #
 ## Data interface / data path
@@ -595,16 +632,6 @@ set MAX_NUM_OF_LANES $TX_NUM_OF_LANES
 if {$RX_NUM_OF_LANES > $TX_NUM_OF_LANES} {
   set MAX_NUM_OF_LANES $RX_NUM_OF_LANES
 }
-for {set i 0} {$i < $MAX_NUM_OF_LANES} {incr i} {
-  add_instance avl_adxcfg_${i} avl_adxcfg
-  add_connection sys_clk.clk avl_adxcfg_${i}.rcfg_clk
-  add_connection sys_clk.clk_reset avl_adxcfg_${i}.rcfg_reset_n
-#   add_connection avl_adxcfg_${i}.rcfg_m0 mxfe_tx_jesd204.phy_reconfig_${i}
-#   add_connection avl_adxcfg_${i}.rcfg_m1 mxfe_rx_jesd204.phy_reconfig_${i}
-
-  set_instance_parameter_value avl_adxcfg_${i} {ADDRESS_WIDTH} $xcvr_reconfig_addr_width
-
-}
 
 #
 ## address map
@@ -613,37 +640,17 @@ for {set i 0} {$i < $MAX_NUM_OF_LANES} {incr i} {
 ## NOTE: if a bridge is used, the address will be bridge_base_addr + peripheral_base_addr
 #
 
-# ad_cpu_interconnect 0x00020000 mxfe_rx_jesd204.link_pll_reconfig "avl_mm_bridge_0" 0x00040000
-if {$RX_NUM_OF_LANES > 0} {ad_cpu_interconnect 0x00000000 avl_adxcfg_0.rcfg_s0    "avl_mm_bridge_0"}
-if {$RX_NUM_OF_LANES > 1} {ad_cpu_interconnect 0x00002000 avl_adxcfg_1.rcfg_s0    "avl_mm_bridge_0"}
-if {$RX_NUM_OF_LANES > 2} {ad_cpu_interconnect 0x00004000 avl_adxcfg_2.rcfg_s0    "avl_mm_bridge_0"}
-if {$RX_NUM_OF_LANES > 3} {ad_cpu_interconnect 0x00006000 avl_adxcfg_3.rcfg_s0    "avl_mm_bridge_0"}
-if {$RX_NUM_OF_LANES > 4} {ad_cpu_interconnect 0x00008000 avl_adxcfg_4.rcfg_s0    "avl_mm_bridge_0"}
-if {$RX_NUM_OF_LANES > 5} {ad_cpu_interconnect 0x0000A000 avl_adxcfg_5.rcfg_s0    "avl_mm_bridge_0"}
-if {$RX_NUM_OF_LANES > 6} {ad_cpu_interconnect 0x0000C000 avl_adxcfg_6.rcfg_s0    "avl_mm_bridge_0"}
-if {$RX_NUM_OF_LANES > 7} {ad_cpu_interconnect 0x0000E000 avl_adxcfg_7.rcfg_s0    "avl_mm_bridge_0"}
+ad_cpu_interconnect 0x00020000 jesd_TX_RX.jesd204_rx_avs "avl_mm_bridge_0" 0x00040000
 
-# ad_cpu_interconnect 0x00020000 mxfe_tx_jesd204.link_pll_reconfig "avl_mm_bridge_1" 0x00080000
-if {$TX_NUM_OF_LANES > 0} {ad_cpu_interconnect 0x00000000 avl_adxcfg_0.rcfg_s1    "avl_mm_bridge_1"}
-if {$TX_NUM_OF_LANES > 1} {ad_cpu_interconnect 0x00002000 avl_adxcfg_1.rcfg_s1    "avl_mm_bridge_1"}
-if {$TX_NUM_OF_LANES > 2} {ad_cpu_interconnect 0x00004000 avl_adxcfg_2.rcfg_s1    "avl_mm_bridge_1"}
-if {$TX_NUM_OF_LANES > 3} {ad_cpu_interconnect 0x00006000 avl_adxcfg_3.rcfg_s1    "avl_mm_bridge_1"}
-if {$TX_NUM_OF_LANES > 4} {ad_cpu_interconnect 0x00008000 avl_adxcfg_4.rcfg_s1    "avl_mm_bridge_1"}
-if {$TX_NUM_OF_LANES > 5} {ad_cpu_interconnect 0x0000A000 avl_adxcfg_5.rcfg_s1    "avl_mm_bridge_1"}
-if {$TX_NUM_OF_LANES > 6} {ad_cpu_interconnect 0x0000C000 avl_adxcfg_6.rcfg_s1    "avl_mm_bridge_1"}
-if {$TX_NUM_OF_LANES > 7} {ad_cpu_interconnect 0x0000E000 avl_adxcfg_7.rcfg_s1    "avl_mm_bridge_1"}
+ad_cpu_interconnect 0x00020000 jesd_TX_RX.jesd204_tx_avs "avl_mm_bridge_1" 0x00080000
 
-# ad_cpu_interconnect 0x000C0000 mxfe_rx_jesd204.link_reconfig
-# ad_cpu_interconnect 0x000C4000 mxfe_rx_jesd204.link_management
-# ad_cpu_interconnect 0x000C8000 mxfe_tx_jesd204.link_reconfig
-# ad_cpu_interconnect 0x000CC000 mxfe_tx_jesd204.link_management
-# ad_cpu_interconnect 0x000D0000 mxfe_tx_jesd204.lane_pll_reconfig
+
 ad_cpu_interconnect 0x000D2000 mxfe_rx_tpl.s_axi
 ad_cpu_interconnect 0x000D4000 mxfe_tx_tpl.s_axi
 ad_cpu_interconnect 0x000D8000 mxfe_rx_dma.s_axi
 ad_cpu_interconnect 0x000DC000 mxfe_tx_dma.s_axi
 ad_cpu_interconnect 0x000E0000 avl_mxfe_gpio.s1
-# ad_cpu_interconnect FIXME reset_seq.av_csr  -- avmm to reset sequencer
+ad_cpu_interconnect 0x000E2000 reset_seq.av_csr
 
 #
 ## interrupts

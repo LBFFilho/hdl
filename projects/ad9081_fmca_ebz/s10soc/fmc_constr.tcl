@@ -1,7 +1,7 @@
 
 
-set_instance_assignment -name IO_STANDARD IOSTANDARD -to System_top_name
-set_instance_assignment -name Termination -to System_top_name
+# set_instance_assignment -name IO_STANDARD IOSTANDARD -to System_top_name
+# set_instance_assignment -name Termination -to System_top_name
 
 set_location_assignment PIN_BG43 -to rx_serial_data[2]      ; ## A6   FMCA_DP02_M2C_P     GXBL1C_RX_CH2p,GXBL1C_REFCLK2p
 set_location_assignment PIN_BG42 -to "rx_serial_data[2](n)" ; ## A7   FMCA_DP02_M2C_N     GXBL1C_RX_CH2n,GXBL1C_REFCLK2n
