@@ -521,29 +521,29 @@ add_interface jesd_pll_locked               conduit end
 add_interface atx_pll_locked                conduit end
 add_interface core_pll_locked               conduit end
 # JESD CSR
-add_interface tx_csr_testmode               conduit_end
-add_interface tx_csr_hd                     conduit_end
-add_interface tx_csr_cs                     conduit_end
-add_interface tx_csr_l                      conduit_end
-add_interface tx_csr_k                      conduit_end
-add_interface tx_csr_n                      conduit_end
-add_interface tx_csr_np                     conduit_end
-add_interface tx_csr_s                      conduit_end
-add_interface tx_csr_cf                     conduit_end
-add_interface tx_csr_f                      conduit_end
-add_interface tx_csr_m                      conduit_end
+add_interface tx_csr_testmode               conduit end
+add_interface tx_csr_hd                     conduit end
+add_interface tx_csr_cs                     conduit end
+add_interface tx_csr_l                      conduit end
+add_interface tx_csr_k                      conduit end
+add_interface tx_csr_n                      conduit end
+add_interface tx_csr_np                     conduit end
+add_interface tx_csr_s                      conduit end
+add_interface tx_csr_cf                     conduit end
+add_interface tx_csr_f                      conduit end
+add_interface tx_csr_m                      conduit end
 add_interface tx_csr_lane_powerdown         conduit end
-add_interface rx_csr_testmode               conduit_end
-add_interface rx_csr_f                      conduit_end
-add_interface rx_csr_k                      conduit_end
-add_interface rx_csr_l                      conduit_end
-add_interface rx_csr_m                      conduit_end
-add_interface rx_csr_n                      conduit_end
-add_interface rx_csr_s                      conduit_end
-add_interface rx_csr_cf                     conduit_end
-add_interface rx_csr_cs                     conduit_end
-add_interface rx_csr_hd                     conduit_end
-add_interface rx_csr_np                     conduit_end
+add_interface rx_csr_testmode               conduit end
+add_interface rx_csr_f                      conduit end
+add_interface rx_csr_k                      conduit end
+add_interface rx_csr_l                      conduit end
+add_interface rx_csr_m                      conduit end
+add_interface rx_csr_n                      conduit end
+add_interface rx_csr_s                      conduit end
+add_interface rx_csr_cf                     conduit end
+add_interface rx_csr_cs                     conduit end
+add_interface rx_csr_hd                     conduit end
+add_interface rx_csr_np                     conduit end
 add_interface rx_csr_lane_powerdown         conduit end
 
 set_interface_property rx_sysref                    EXPORT_OF jesd_TX_RX.rx_sysref
@@ -564,7 +564,7 @@ set_interface_property reset_seq_dsrt5_qual         EXPORT_OF reset_seq.reset5_d
 set_interface_property jesd_pll_locked              EXPORT_OF jesd_TX_RX.pll_locked  
 set_interface_property atx_pll_locked               EXPORT_OF xcvr_atx_pll.pll_locked
 set_interface_property core_pll_locked              EXPORT_OF jesd_core_pll.locked
-set_interface_property tx_csr_testmode              EXPORT_OF jesd_TX_RX.tx_csr_testmode
+set_interface_property tx_csr_testmode              EXPORT_OF jesd_TX_RX.csr_tx_testmode
 set_interface_property tx_csr_hd                    EXPORT_OF jesd_TX_RX.tx_csr_hd
 set_interface_property tx_csr_cs                    EXPORT_OF jesd_TX_RX.tx_csr_cs
 set_interface_property tx_csr_l                     EXPORT_OF jesd_TX_RX.tx_csr_l
@@ -576,7 +576,7 @@ set_interface_property tx_csr_cf                    EXPORT_OF jesd_TX_RX.tx_csr_
 set_interface_property tx_csr_f                     EXPORT_OF jesd_TX_RX.tx_csr_f
 set_interface_property tx_csr_m                     EXPORT_OF jesd_TX_RX.tx_csr_m
 set_interface_property tx_csr_lane_powerdown        EXPORT_OF jesd_TX_RX.tx_csr_lane_powerdown
-set_interface_property rx_csr_testmode              EXPORT_OF jesd_TX_RX.rx_csr_testmode
+set_interface_property rx_csr_testmode              EXPORT_OF jesd_TX_RX.csr_rx_testmode
 set_interface_property rx_csr_f                     EXPORT_OF jesd_TX_RX.rx_csr_f
 set_interface_property rx_csr_k                     EXPORT_OF jesd_TX_RX.rx_csr_k
 set_interface_property rx_csr_l                     EXPORT_OF jesd_TX_RX.rx_csr_l
