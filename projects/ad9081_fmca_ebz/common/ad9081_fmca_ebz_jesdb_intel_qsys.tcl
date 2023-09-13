@@ -395,6 +395,26 @@ add_connection sys_clk.clk_reset avl_mxfe_gpio.reset
 add_interface mxfe_gpio conduit end
 set_interface_property mxfe_gpio EXPORT_OF avl_mxfe_gpio.external_connection
 
+# jesd csr gpio_i
+add_instance jesd_csr_gpio_i altera_avalon_pio
+set_instance_parameter_value jesd_csr_gpio_i {direction} {Input}
+set_instance_parameter_value jesd_csr_gpio_i {generateIRQ} {1}
+set_instance_parameter_value jesd_csr_gpio_i {width} {32}
+add_connection sys_clk.clk jesd_csr_gpio_i.clk
+add_connection sys_clk.clk_reset jesd_csr_gpio_i.reset
+add_interface jesd_gpio_i conduit end
+set_interface_property jesd_gpio_i EXPORT_OF jesd_csr_gpio_i.external_connection
+
+# jesd csr gpio_o
+add_instance jesd_csr_gpio_o altera_avalon_pio
+set_instance_parameter_value jesd_csr_gpio_o {direction} {Output}
+set_instance_parameter_value jesd_csr_gpio_o {generateIRQ} {0}
+set_instance_parameter_value jesd_csr_gpio_o {width} {32}
+add_connection sys_clk.clk jesd_csr_gpio_o.clk
+add_connection sys_clk.clk_reset jesd_csr_gpio_o.reset
+add_interface jesd_gpio_o conduit end
+set_interface_property jesd_gpio_o EXPORT_OF jesd_csr_gpio_o.external_connection
+
 #
 ## clocks and resets
 #
@@ -521,30 +541,51 @@ add_interface jesd_pll_locked               conduit end
 add_interface atx_pll_locked                conduit end
 add_interface core_pll_locked               conduit end
 # JESD CSR
-add_interface tx_csr_testmode               conduit end
-add_interface tx_csr_hd                     conduit end
-add_interface tx_csr_cs                     conduit end
-add_interface tx_csr_l                      conduit end
-add_interface tx_csr_k                      conduit end
-add_interface tx_csr_n                      conduit end
-add_interface tx_csr_np                     conduit end
-add_interface tx_csr_s                      conduit end
-add_interface tx_csr_cf                     conduit end
-add_interface tx_csr_f                      conduit end
-add_interface tx_csr_m                      conduit end
-add_interface tx_csr_lane_powerdown         conduit end
-add_interface rx_csr_testmode               conduit end
-add_interface rx_csr_f                      conduit end
-add_interface rx_csr_k                      conduit end
-add_interface rx_csr_l                      conduit end
-add_interface rx_csr_m                      conduit end
-add_interface rx_csr_n                      conduit end
-add_interface rx_csr_s                      conduit end
-add_interface rx_csr_cf                     conduit end
-add_interface rx_csr_cs                     conduit end
-add_interface rx_csr_hd                     conduit end
-add_interface rx_csr_np                     conduit end
-add_interface rx_csr_lane_powerdown         conduit end
+add_interface jesd_tx_csr_testmode               conduit end
+add_interface jesd_tx_csr_hd                     conduit end
+add_interface jesd_tx_csr_cs                     conduit end
+add_interface jesd_tx_csr_l                      conduit end
+add_interface jesd_tx_csr_k                      conduit end
+add_interface jesd_tx_csr_n                      conduit end
+add_interface jesd_tx_csr_np                     conduit end
+add_interface jesd_tx_csr_s                      conduit end
+add_interface jesd_tx_csr_cf                     conduit end
+add_interface jesd_tx_csr_f                      conduit end
+add_interface jesd_tx_csr_m                      conduit end
+add_interface jesd_tx_csr_lane_powerdown         conduit end
+add_interface jesd_tx_csr_testpattern_a          conduit end
+add_interface jesd_tx_csr_testpattern_b          conduit end
+add_interface jesd_tx_csr_testpattern_c          conduit end
+add_interface jesd_tx_csr_testpattern_d          conduit end
+add_interface jesd_rx_csr_testmode               conduit end
+add_interface jesd_rx_csr_f                      conduit end
+add_interface jesd_rx_csr_k                      conduit end
+add_interface jesd_rx_csr_l                      conduit end
+add_interface jesd_rx_csr_m                      conduit end
+add_interface jesd_rx_csr_n                      conduit end
+add_interface jesd_rx_csr_s                      conduit end
+add_interface jesd_rx_csr_cf                     conduit end
+add_interface jesd_rx_csr_cs                     conduit end
+add_interface jesd_rx_csr_hd                     conduit end
+add_interface jesd_rx_csr_np                     conduit end
+add_interface jesd_rx_csr_lane_powerdown         conduit end
+
+# JESD Debug
+add_interface jesd_tx_somf                    conduit end
+add_interface jesd_tx_frame_error             conduit end
+add_interface jesd_tx_frame_ready             conduit end
+add_interface jesd_tx_dlb_data                conduit end
+add_interface jesd_tx_dlb_kchar_data          conduit end
+add_interface jesd_txphy_clk                  conduit end
+add_interface jesd_rx_somf                    conduit end
+add_interface jesd_rx_frame_error             conduit end
+add_interface jesd_rx_dlb_data                conduit end
+add_interface jesd_rx_dlb_data_valid          conduit end
+add_interface jesd_rx_dlb_kchar_data          conduit end
+add_interface jesd_rx_dlb_errdetect           conduit end
+add_interface jesd_rx_dlb_disperr             conduit end
+add_interface jesd_rxphy_clk                  conduit end
+add_interface jesd_seriallpbken               conduit end
 
 set_interface_property rx_sysref                    EXPORT_OF jesd_TX_RX.rx_sysref
 set_interface_property rx_sync                      EXPORT_OF jesd_TX_RX.rx_dev_sync_n
@@ -564,30 +605,49 @@ set_interface_property reset_seq_dsrt5_qual         EXPORT_OF reset_seq.reset5_d
 set_interface_property jesd_pll_locked              EXPORT_OF jesd_TX_RX.pll_locked  
 set_interface_property atx_pll_locked               EXPORT_OF xcvr_atx_pll.pll_locked
 set_interface_property core_pll_locked              EXPORT_OF jesd_core_pll.locked
-set_interface_property tx_csr_testmode              EXPORT_OF jesd_TX_RX.csr_tx_testmode
-set_interface_property tx_csr_hd                    EXPORT_OF jesd_TX_RX.tx_csr_hd
-set_interface_property tx_csr_cs                    EXPORT_OF jesd_TX_RX.tx_csr_cs
-set_interface_property tx_csr_l                     EXPORT_OF jesd_TX_RX.tx_csr_l
-set_interface_property tx_csr_k                     EXPORT_OF jesd_TX_RX.tx_csr_k
-set_interface_property tx_csr_n                     EXPORT_OF jesd_TX_RX.tx_csr_n
-set_interface_property tx_csr_np                    EXPORT_OF jesd_TX_RX.tx_csr_np
-set_interface_property tx_csr_s                     EXPORT_OF jesd_TX_RX.tx_csr_s
-set_interface_property tx_csr_cf                    EXPORT_OF jesd_TX_RX.tx_csr_cf
-set_interface_property tx_csr_f                     EXPORT_OF jesd_TX_RX.tx_csr_f
-set_interface_property tx_csr_m                     EXPORT_OF jesd_TX_RX.tx_csr_m
-set_interface_property tx_csr_lane_powerdown        EXPORT_OF jesd_TX_RX.tx_csr_lane_powerdown
-set_interface_property rx_csr_testmode              EXPORT_OF jesd_TX_RX.csr_rx_testmode
-set_interface_property rx_csr_f                     EXPORT_OF jesd_TX_RX.rx_csr_f
-set_interface_property rx_csr_k                     EXPORT_OF jesd_TX_RX.rx_csr_k
-set_interface_property rx_csr_l                     EXPORT_OF jesd_TX_RX.rx_csr_l
-set_interface_property rx_csr_m                     EXPORT_OF jesd_TX_RX.rx_csr_m
-set_interface_property rx_csr_n                     EXPORT_OF jesd_TX_RX.rx_csr_n
-set_interface_property rx_csr_s                     EXPORT_OF jesd_TX_RX.rx_csr_s
-set_interface_property rx_csr_cf                    EXPORT_OF jesd_TX_RX.rx_csr_cf
-set_interface_property rx_csr_cs                    EXPORT_OF jesd_TX_RX.rx_csr_cs
-set_interface_property rx_csr_hd                    EXPORT_OF jesd_TX_RX.rx_csr_hd
-set_interface_property rx_csr_np                    EXPORT_OF jesd_TX_RX.rx_csr_np
-set_interface_property rx_csr_lane_powerdown        EXPORT_OF jesd_TX_RX.rx_csr_lane_powerdown
+set_interface_property jesd_tx_csr_testmode         EXPORT_OF jesd_TX_RX.csr_tx_testmode
+set_interface_property jesd_tx_csr_hd               EXPORT_OF jesd_TX_RX.tx_csr_hd
+set_interface_property jesd_tx_csr_cs               EXPORT_OF jesd_TX_RX.tx_csr_cs
+set_interface_property jesd_tx_csr_l                EXPORT_OF jesd_TX_RX.tx_csr_l
+set_interface_property jesd_tx_csr_k                EXPORT_OF jesd_TX_RX.tx_csr_k
+set_interface_property jesd_tx_csr_n                EXPORT_OF jesd_TX_RX.tx_csr_n
+set_interface_property jesd_tx_csr_np               EXPORT_OF jesd_TX_RX.tx_csr_np
+set_interface_property jesd_tx_csr_s                EXPORT_OF jesd_TX_RX.tx_csr_s
+set_interface_property jesd_tx_csr_cf               EXPORT_OF jesd_TX_RX.tx_csr_cf
+set_interface_property jesd_tx_csr_f                EXPORT_OF jesd_TX_RX.tx_csr_f
+set_interface_property jesd_tx_csr_m                EXPORT_OF jesd_TX_RX.tx_csr_m
+set_interface_property jesd_tx_csr_lane_powerdown   EXPORT_OF jesd_TX_RX.tx_csr_lane_powerdown
+set_interface_property jesd_tx_csr_testpattern_a    EXPORT_OF jesd_TX_RX.csr_tx_testpattern_a
+set_interface_property jesd_tx_csr_testpattern_b    EXPORT_OF jesd_TX_RX.csr_tx_testpattern_b
+set_interface_property jesd_tx_csr_testpattern_c    EXPORT_OF jesd_TX_RX.csr_tx_testpattern_c
+set_interface_property jesd_tx_csr_testpattern_d    EXPORT_OF jesd_TX_RX.csr_tx_testpattern_d
+set_interface_property jesd_rx_csr_testmode         EXPORT_OF jesd_TX_RX.csr_rx_testmode
+set_interface_property jesd_rx_csr_f                EXPORT_OF jesd_TX_RX.rx_csr_f
+set_interface_property jesd_rx_csr_k                EXPORT_OF jesd_TX_RX.rx_csr_k
+set_interface_property jesd_rx_csr_l                EXPORT_OF jesd_TX_RX.rx_csr_l
+set_interface_property jesd_rx_csr_m                EXPORT_OF jesd_TX_RX.rx_csr_m
+set_interface_property jesd_rx_csr_n                EXPORT_OF jesd_TX_RX.rx_csr_n
+set_interface_property jesd_rx_csr_s                EXPORT_OF jesd_TX_RX.rx_csr_s
+set_interface_property jesd_rx_csr_cf               EXPORT_OF jesd_TX_RX.rx_csr_cf
+set_interface_property jesd_rx_csr_cs               EXPORT_OF jesd_TX_RX.rx_csr_cs
+set_interface_property jesd_rx_csr_hd               EXPORT_OF jesd_TX_RX.rx_csr_hd
+set_interface_property jesd_rx_csr_np               EXPORT_OF jesd_TX_RX.rx_csr_np
+set_interface_property jesd_rx_csr_lane_powerdown   EXPORT_OF jesd_TX_RX.rx_csr_lane_powerdown
+set_interface_property jesd_tx_somf                 EXPORT_OF jesd_TX_RX.tx_somf
+set_interface_property jesd_tx_frame_error          EXPORT_OF jesd_TX_RX.jesd204_tx_frame_error
+set_interface_property jesd_tx_frame_ready          EXPORT_OF jesd_TX_RX.jesd204_tx_frame_ready
+set_interface_property jesd_tx_dlb_data             EXPORT_OF jesd_TX_RX.jesd204_tx_dlb_data
+set_interface_property jesd_tx_dlb_kchar_data       EXPORT_OF jesd_TX_RX.jesd204_tx_dlb_kchar_data
+set_interface_property jesd_txphy_clk               EXPORT_OF jesd_TX_RX.txphy_clk
+set_interface_property jesd_rx_somf                 EXPORT_OF jesd_TX_RX.rx_somf
+set_interface_property jesd_rx_frame_error          EXPORT_OF jesd_TX_RX.jesd204_rx_frame_error
+set_interface_property jesd_rx_dlb_data             EXPORT_OF jesd_TX_RX.jesd204_rx_dlb_data
+set_interface_property jesd_rx_dlb_data_valid       EXPORT_OF jesd_TX_RX.jesd204_rx_dlb_data_valid
+set_interface_property jesd_rx_dlb_kchar_data       EXPORT_OF jesd_TX_RX.jesd204_rx_dlb_kchar_data
+set_interface_property jesd_rx_dlb_errdetect        EXPORT_OF jesd_TX_RX.jesd204_rx_dlb_errdetect
+set_interface_property jesd_rx_dlb_disperr          EXPORT_OF jesd_TX_RX.jesd204_rx_dlb_disperr
+set_interface_property jesd_rxphy_clk               EXPORT_OF jesd_TX_RX.rxphy_clk
+set_interface_property jesd_seriallpbken            EXPORT_OF jesd_TX_RX.rx_seriallpbken
 
 #
 ## Data interface / data path
@@ -650,7 +710,9 @@ ad_cpu_interconnect 0x000D4000 mxfe_tx_tpl.s_axi
 ad_cpu_interconnect 0x000D8000 mxfe_rx_dma.s_axi
 ad_cpu_interconnect 0x000DC000 mxfe_tx_dma.s_axi
 ad_cpu_interconnect 0x000E0000 avl_mxfe_gpio.s1
-ad_cpu_interconnect 0x000E2000 reset_seq.av_csr
+ad_cpu_interconnect 0x000E2000 jesd_csr_gpio_i.s1
+ad_cpu_interconnect 0x000E4000 jesd_csr_gpio_o.s1
+ad_cpu_interconnect 0x000E6000 reset_seq.av_csr
 
 #
 ## interrupts
@@ -661,6 +723,7 @@ ad_cpu_interrupt 12  mxfe_tx_dma.interrupt_sender
 ad_cpu_interrupt 13  jesd_TX_RX.jesd204_rx_int
 ad_cpu_interrupt 14  jesd_TX_RX.jesd204_tx_int
 ad_cpu_interrupt 15  avl_mxfe_gpio.irq
-#ad_cpu_interrupt FIXME reset_seq.av_csr_irq
+ad_cpu_interrupt 16  jesd_csr_gpio_i.irq
+ad_cpu_interrupt 17  reset_seq.av_csr_irq
 
 
