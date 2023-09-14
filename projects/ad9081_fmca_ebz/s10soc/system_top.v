@@ -189,6 +189,8 @@ module system_top  #(
   wire    [  3:0]   xcvr_rst_ctrl_rx_ready_s; 
   wire    [ 31:0]   jesd_gpio_i;
   wire    [ 31:0]   jesd_gpio_o;
+  reg               core_pll_locked_d1;
+  reg               core_pll_locked_sync_s;
   // jesd misc internal signals 
   wire    [  3:0]   tx_csr_lane_powerdown_s;
   wire    [  3:0]   rx_csr_lane_powerdown_s;
@@ -317,7 +319,17 @@ module system_top  #(
 
   // jesd clocking & reset misc
 
-  assign reset1_qual = core_pll_locked_s; // FIXME: sync this to sys_clk?
+  always @(posedge sys_clk ) begin
+    if (!sys_resetn_s) begin
+      core_pll_locked_d1 <= 1'b0;
+      core_pll_locked_sync_s <= 1'b0;
+    end else begin
+      core_pll_locked_d1 <= core_pll_locked_s;
+      core_pll_locked_sync_s <= core_pll_locked_d1;
+    end
+  end
+
+  assign reset1_qual = core_pll_locked_sync_s;
   assign reset2_qual = &(xcvr_rst_ctrl_tx_ready_s | tx_csr_lane_powerdown_s);
   assign reset5_qual = &(xcvr_rst_ctrl_rx_ready_s | rx_csr_lane_powerdown_s);
 

@@ -14,3 +14,8 @@ set_false_path -to [get_registers *sys_gpio_bd|readdata[12]*]
 set_false_path -to [get_registers *sys_gpio_bd|readdata[13]*]
 
 set_false_path -from [get_registers *altera_reset_synchronizer:alt_rst_sync_uq1|altera_reset_synchronizer_int_chain_out*]
+
+set_false_path -to [get_keepers {core_pll_locked_d1}]
+
+set_clock_groups -asynchronous -group "ref_clk device_clk i_system_bd|jesd_core_pll|jesd_core_pll_link_clk"  -group {sys_clk_100mhz} -group {altera_reserved_tck}
+				
