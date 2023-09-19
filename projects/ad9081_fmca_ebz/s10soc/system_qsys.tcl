@@ -18,4 +18,3 @@ if [info exists ad_project_dir] {
 } else {
   source ../common/ad9081_fmca_ebz_jesdb_intel_qsys.tcl
 }
-

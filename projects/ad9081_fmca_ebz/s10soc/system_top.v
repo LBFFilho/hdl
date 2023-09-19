@@ -484,7 +484,6 @@ module system_top  #(
     .xcvr_reset_ctrl_pll_locked_pll_locked  ( atx_pll_locked_s ),
     .xcvr_reset_ctrl_pll_select_pll_select  ( 1'b0 ),
     .xcvr_reset_ctrl_rx_ready_rx_ready      ( xcvr_rst_ctrl_rx_ready_s ),
-    .xcvr_reset_ctrl_tx_ready_tx_ready      ( xcvr_rst_ctrl_tx_ready_s )
-  );
+    .xcvr_reset_ctrl_tx_ready_tx_ready      ( xcvr_rst_ctrl_tx_ready_s ));
 
 endmodule
